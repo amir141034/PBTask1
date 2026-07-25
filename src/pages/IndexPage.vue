@@ -1,17 +1,13 @@
 <template>
-  <q-page class="flex flex-center">
-    <div class="column items-center">
-      <img
-        alt="Quasar logo"
-        src="~@/assets/quasar-logo-vertical.svg"
-        style="width: 200px; height: 200px"
-      />
+  <q-page class="column">
+    <div class="row justify-around items-center q-pa-md bg-white">
+      <q-btn color="positive" label="START" icon="play_arrow" />
 
-      <q-btn class="q-mt-md" color="primary" to="/second" label="Go to Second Page" no-caps />
+      <q-btn round color="primary" icon="add" />
+
+      <q-btn color="negative" label="STOP" icon="stop" />
     </div>
   </q-page>
 </template>
 
-<script setup>
-//
-</script>
+<script setup lang="ts"></script>
