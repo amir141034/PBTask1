@@ -38,7 +38,17 @@ import { useGpsTracker } from '../composables/useGpsTracker'
 
 const $q = useQuasar()
 
-const { path, markers, errorMessage, start, stop, addMarker, finishAndSave } = useGpsTracker()
+const {
+  isRecording,
+  isSaving,
+  path,
+  markers,
+  errorMessage,
+  start,
+  stop,
+  addMarker,
+  finishAndSave,
+} = useGpsTracker()
 
 const gpsMap = ref(null)
 
@@ -46,17 +56,13 @@ const onStart = async () => {
   try {
     await start()
 
+    console.log(errorMessage)
     $q.notify({
       type: 'positive',
       message: 'Recording started',
       timeout: 800,
     })
   } catch (err) {
-    $q.notify({
-      type: 'negative',
-      message: 'Unable to get current location',
-    })
-
     console.error(err)
   }
 }
@@ -71,11 +77,6 @@ const onAddMarker = async () => {
       timeout: 800,
     })
   } catch (err) {
-    $q.notify({
-      type: 'negative',
-      message: 'Unable to get current location',
-    })
-
     console.error(err)
   }
 }
