@@ -24,7 +24,7 @@ import { useGpsTracker } from '../composables/useGpsTracker'
 
 const $q = useQuasar()
 
-const { path, markers, errorMessage, start, stop, addMarker } = useGpsTracker()
+const { path, markers, errorMessage, start, stop, addMarker, finishAndSave } = useGpsTracker()
 
 const gpsMap = ref(null)
 
@@ -72,6 +72,8 @@ const onStop = async () => {
   if (!gpsMap.value) return
 
   try {
+    const screenshot = await gpsMap.value.captureScreenshot()
+    await finishAndSave(screenshot)
     $q.notify({ type: 'positive', message: 'Path and screenshot saved to device' })
   } catch (err) {
     $q.notify({

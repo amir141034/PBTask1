@@ -1,5 +1,6 @@
 import { ref, computed, shallowRef } from 'vue'
 import { Geolocation } from '@capacitor/geolocation'
+import { saveSession } from '../utils/storage'
 
 export function useGpsTracker() {
   const path = ref([])
@@ -68,6 +69,60 @@ export function useGpsTracker() {
     markers.value.push(marker)
   }
 
+  /**
+   * Persists the completed session (path + markers + a pre-rendered map
+   * screenshot) to local device storage.
+   */
+
+  // Browser Download
+  const finishAndSave = async (pngDataUrl) => {
+    isSaving.value = true
+
+    try {
+      const now = Date.now()
+
+      const session = {
+        id: `session-${now}`,
+        startedAt: path.value[0]?.timestamp ?? now,
+        endedAt: path.value[path.value.length - 1]?.timestamp ?? now,
+        path: path.value,
+        markers: markers.value,
+      }
+
+      // Download the screenshot so you can verify it
+      const a = document.createElement('a')
+      a.href = pngDataUrl
+      a.download = `${session.id}.png`
+      a.click()
+
+      const { imagePath, jsonPath } = await saveSession(session, pngDataUrl)
+
+      console.log(imagePath)
+      console.log(jsonPath)
+
+      return { imagePath, jsonPath }
+    } finally {
+      isSaving.value = false
+    }
+  }
+
+  //   const finishAndSave = async (pngDataUrl) => {
+  //     isSaving.value = true
+  //     try {
+  //       const now = Date.now()
+  //       const session = {
+  //         id: `session-${now}`,
+  //         startedAt: path.value[0]?.timestamp ?? now,
+  //         endedAt: path.value[path.value.length - 1]?.timestamp ?? now,
+  //         path: path.value,
+  //         markers: markers.value,
+  //       }
+  //       return await saveSession(session, pngDataUrl)
+  //     } finally {
+  //       isSaving.value = false
+  //     }
+  //   }
+
   return {
     isRecording,
     isSaving,
@@ -78,5 +133,6 @@ export function useGpsTracker() {
     start,
     stop,
     addMarker,
+    finishAndSave,
   }
 }
