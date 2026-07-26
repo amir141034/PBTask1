@@ -19,7 +19,12 @@
       <q-card-section>
         <q-btn label="View Screenshot" @click="loadImage(session)" />
 
-        <img v-if="images[session.id]" :src="images[session.id]" style="width: 100%" />
+        <img
+          class="q-my-sm"
+          v-if="images[session.id] && openView"
+          :src="images[session.id]"
+          style="width: 100%"
+        />
       </q-card-section>
     </q-card>
   </q-page>
@@ -31,9 +36,13 @@ import { getSavedSessions, getSessionImage } from '../utils/storage'
 
 const sessions = ref([])
 const images = ref({})
+const openView = ref(false)
 
 const loadImage = async (session) => {
-  images.value[session.id] = await getSessionImage(session.id)
+  if (!images.value[session.id]) {
+    images.value[session.id] = await getSessionImage(session.id)
+  }
+  openView.value = !openView.value
 }
 
 onMounted(async () => {
