@@ -7,11 +7,24 @@
     </q-banner>
 
     <div class="controls">
-      <q-btn color="positive" label="START" icon="play_arrow" @click="onStart" />
+      <q-btn
+        :color="isRecording ? 'grey' : 'positive'"
+        :disable="isRecording || isSaving"
+        label="START"
+        icon="play_arrow"
+        @click="onStart"
+      />
 
-      <q-btn round color="primary" icon="add" @click="onAddMarker" />
+      <q-btn round :disable="!isRecording" color="primary" icon="add" @click="onAddMarker" />
 
-      <q-btn color="negative" label="STOP" icon="stop" @click="onStop" />
+      <q-btn
+        :color="!isRecording ? 'grey' : 'negative'"
+        :disable="!isRecording || isSaving"
+        :loading="isSaving"
+        label="STOP"
+        icon="stop"
+        @click="onStop"
+      />
       <q-btn label="Saved Sessions" color="primary" @click="$router.push('/sessions')" />
     </div>
   </q-page>
