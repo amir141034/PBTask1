@@ -3,31 +3,13 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem'
 const SESSIONS_DIR = 'gps-sessions'
 
 /**
- * Ensures the sessions directory exists. mkdir throws if it's already
- * there, so we swallow that specific case.
- */
-const ensureSessionsDir = async () => {
-  try {
-    await Filesystem.mkdir({
-      path: SESSIONS_DIR,
-      directory: Directory.Data,
-      recursive: true,
-    })
-  } catch {
-    console.log('Failed session directory')
-  }
-}
-
-/**
  * Persists the path/markers metadata as JSON and the map screenshot as a
  * PNG, both under the same session id so they're easy to correlate later.
  *
- * @param session     Session metadata (path + markers + timing)
- * @param pngDataUrl  A "data:image/png;base64,...." string from html2canvas
+ * session     Session metadata (path + markers + timing)
+ * pngDataUrl  A "data:image/png;base64,...." string from html2canvas
  */
 export const saveSession = async (session, pngDataUrl) => {
-  await ensureSessionsDir()
-
   const base64Image = pngDataUrl.substring(pngDataUrl.indexOf(',') + 1)
 
   const imageFileName = `${SESSIONS_DIR}/${session.id}.png`
@@ -61,8 +43,6 @@ export const saveSession = async (session, pngDataUrl) => {
 /* Saved Recorded Sessions */
 
 export const getSavedSessions = async () => {
-  await ensureSessionsDir()
-
   const result = await Filesystem.readdir({
     path: SESSIONS_DIR,
     directory: Directory.Data,

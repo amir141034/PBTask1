@@ -8,7 +8,6 @@ export function useGpsTracker() {
   const markers = ref([])
   const isRecording = ref(false)
   const isSaving = ref(false)
-  // const errorMessage = ref(null)
   const watchId = shallowRef(null)
   const hasPath = computed(() => path.value.length > 0)
 
@@ -49,14 +48,14 @@ export function useGpsTracker() {
           })
         }
 
-        const candidate = {
+        const currPath = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
           timestamp: position.timestamp,
           accuracy: position.coords.accuracy,
         }
 
-        path.value.push(candidate)
+        path.value.push(currPath)
       },
     )
   }
@@ -85,7 +84,7 @@ export function useGpsTracker() {
       timestamp: position.timestamp,
       accuracy: position.coords.accuracy,
     }
-    if (marker.value.length === 0) {
+    if (marker.value !== null) {
       Notify.create({
         type: 'positive',
         message: 'Marker added',
