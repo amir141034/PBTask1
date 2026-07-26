@@ -4,7 +4,7 @@ const SESSIONS_DIR = 'gps-sessions'
 
 /**
  * Persists the path/markers metadata as JSON and the map screenshot as a
- * PNG, both under the same session id so they're easy to correlate later.
+ * PNG, both under the same session.
  *
  * session     Session metadata (path + markers + timing)
  * pngDataUrl  A "data:image/png;base64,...." string from html2canvas
@@ -39,8 +39,6 @@ export const saveSession = async (session, pngDataUrl) => {
 
   return { imagePath, jsonPath }
 }
-
-/* Saved Recorded Sessions */
 
 export const getSavedSessions = async () => {
   const result = await Filesystem.readdir({

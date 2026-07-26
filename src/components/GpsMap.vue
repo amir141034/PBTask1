@@ -45,7 +45,6 @@ onBeforeUnmount(() => {
   map = null
 })
 
-// Redraw the recorded path whenever it grows, and follow the latest fix.
 watch(
   () => props.path,
   (newPath) => {
@@ -63,7 +62,6 @@ watch(
   { deep: true },
 )
 
-// Redraw manual (+) markers whenever the list changes.
 watch(
   () => props.markers,
   (newMarkers) => {
@@ -108,7 +106,7 @@ const drawStartEndMarkers = () => {
 const captureScreenshot = async () => {
   drawStartEndMarkers()
 
-  // Let Leaflet finish painting the newly added markers before snapshotting.
+  // Let Leaflet paint the newly added markers before snapshotting.
   await new Promise((resolve) => requestAnimationFrame(resolve))
 
   if (!mapContainer.value) throw new Error('Map container not ready')

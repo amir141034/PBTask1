@@ -20,9 +20,6 @@ export function useGpsTracker() {
     })
   }
 
-  /**
-   * Begins a new recording session: clears any previous path/markers
-   */
   const start = async () => {
     console.log('START')
     path.value = []
@@ -61,7 +58,7 @@ export function useGpsTracker() {
   }
 
   /**
-   * Stops the location watch. Also used for error
+   * Also used for error
    */
   const stop = async () => {
     console.log('STOP')
