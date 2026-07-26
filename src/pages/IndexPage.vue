@@ -1,19 +1,70 @@
 <template>
   <q-page class="column">
-    <GpsMap ref="gpsMap" class="col" />
+    <GpsMap ref="gpsMap" class="col" :path="path" :markers="markers" />
+
+    <q-banner v-if="errorMessage" class="bg-negative text-white" dense>
+      {{ errorMessage }}
+    </q-banner>
 
     <div class="controls">
-      <q-btn color="positive" label="START" icon="play_arrow" />
+      <q-btn color="positive" label="START" icon="play_arrow" @click="onStart" />
 
-      <q-btn round color="primary" icon="add" />
+      <q-btn round color="primary" icon="add" @click="onAddMarker" />
 
-      <q-btn color="negative" label="STOP" icon="stop" />
+      <q-btn color="negative" label="STOP" icon="stop" @click="onStop" />
     </div>
   </q-page>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import { ref } from 'vue'
+import { useQuasar } from 'quasar'
 import GpsMap from '../components/GpsMap.vue'
+import { useGpsTracker } from '../composables/useGpsTracker'
+
+const $q = useQuasar()
+const { path, markers, errorMessage, start, stop, addMarker } = useGpsTracker()
+
+const gpsMap = ref(null)
+
+const onStart = async () => {
+  await start()
+  $q.notify({ type: 'positive', message: 'Recording started', timeout: 1000 })
+}
+
+const onAddMarker = async () => {
+  try {
+    await addMarker()
+
+    $q.notify({
+      type: 'positive',
+      message: 'Marker added',
+      timeout: 800,
+    })
+  } catch (err) {
+    $q.notify({
+      type: 'negative',
+      message: 'Unable to get current location',
+    })
+
+    console.error(err)
+  }
+}
+
+const onStop = async () => {
+  await stop()
+
+  if (!gpsMap.value) return
+
+  try {
+    $q.notify({ type: 'positive', message: 'Path and screenshot saved to device' })
+  } catch (err) {
+    $q.notify({
+      type: 'negative',
+      message: `Failed to save session: ${err instanceof Error ? err.message : String(err)}`,
+    })
+  }
+}
 </script>
 
 <style scoped>
