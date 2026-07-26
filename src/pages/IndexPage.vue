@@ -23,6 +23,7 @@ import GpsMap from '../components/GpsMap.vue'
 import { useGpsTracker } from '../composables/useGpsTracker'
 
 const $q = useQuasar()
+
 const { path, markers, errorMessage, start, stop, addMarker } = useGpsTracker()
 
 const gpsMap = ref(null)
