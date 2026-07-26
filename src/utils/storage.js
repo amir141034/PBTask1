@@ -55,12 +55,41 @@ export const saveSession = async (session, pngDataUrl) => {
     directory: Directory.Data,
   })
 
-  const file = await Filesystem.readFile({
-    path: `${SESSIONS_DIR}/${session.id}.png`,
+  return { imagePath, jsonPath }
+}
+
+/* Saved Recorded Sessions */
+
+export const getSavedSessions = async () => {
+  await ensureSessionsDir()
+
+  const result = await Filesystem.readdir({
+    path: SESSIONS_DIR,
     directory: Directory.Data,
   })
 
-  console.log(file)
+  const jsonFiles = result.files.filter((file) => file.name.endsWith('.json'))
 
-  return { imagePath, jsonPath }
+  const sessions = []
+
+  for (const file of jsonFiles) {
+    const data = await Filesystem.readFile({
+      path: `${SESSIONS_DIR}/${file.name}`,
+      directory: Directory.Data,
+      encoding: Encoding.UTF8,
+    })
+
+    sessions.push(JSON.parse(data.data))
+  }
+
+  return sessions
+}
+
+export const getSessionImage = async (id) => {
+  const result = await Filesystem.readFile({
+    path: `${SESSIONS_DIR}/${id}.png`,
+    directory: Directory.Data,
+  })
+
+  return `data:image/png;base64,${result.data}`
 }

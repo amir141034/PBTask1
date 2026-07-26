@@ -12,6 +12,7 @@
       <q-btn round color="primary" icon="add" @click="onAddMarker" />
 
       <q-btn color="negative" label="STOP" icon="stop" @click="onStop" />
+      <q-btn label="Saved Sessions" color="primary" @click="$router.push('/sessions')" />
     </div>
   </q-page>
 </template>
