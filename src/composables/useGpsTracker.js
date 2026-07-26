@@ -4,6 +4,8 @@ import { Geolocation } from '@capacitor/geolocation'
 export function useGpsTracker() {
   const path = ref([])
   const markers = ref([])
+  const isRecording = ref(false)
+  const isSaving = ref(false)
   const errorMessage = ref(null)
   const watchId = shallowRef(null)
   const hasPath = computed(() => path.value.length > 0)
@@ -12,10 +14,11 @@ export function useGpsTracker() {
    * Begins a new recording session: clears any previous path/markers
    */
   const start = async () => {
+    console.log('START')
     errorMessage.value = null
-
     path.value = []
     markers.value = []
+    isRecording.value = true
 
     watchId.value = await Geolocation.watchPosition(
       { enableHighAccuracy: true, timeout: 10000 },
@@ -42,10 +45,12 @@ export function useGpsTracker() {
    * Stops the location watch.
    */
   const stop = async () => {
+    console.log('STOP')
     if (watchId.value) {
       await Geolocation.clearWatch({ id: watchId.value })
       watchId.value = null
     }
+    isRecording.value = false
   }
 
   /**
@@ -64,6 +69,8 @@ export function useGpsTracker() {
   }
 
   return {
+    isRecording,
+    isSaving,
     path,
     markers,
     hasPath,

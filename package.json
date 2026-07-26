@@ -14,6 +14,7 @@
     "postinstall": "quasar prepare --silent"
   },
   "dependencies": {
+    "@capacitor/filesystem": "^8.1.2",
     "@capacitor/geolocation": "^8.2.0",
     "@quasar/extras": "^2.0.0",
     "@types/leaflet": "^1.9.21",

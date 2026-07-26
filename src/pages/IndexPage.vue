@@ -29,8 +29,22 @@ const { path, markers, errorMessage, start, stop, addMarker } = useGpsTracker()
 const gpsMap = ref(null)
 
 const onStart = async () => {
-  await start()
-  $q.notify({ type: 'positive', message: 'Recording started', timeout: 1000 })
+  try {
+    await start()
+
+    $q.notify({
+      type: 'positive',
+      message: 'Recording started',
+      timeout: 800,
+    })
+  } catch (err) {
+    $q.notify({
+      type: 'negative',
+      message: 'Unable to get current location',
+    })
+
+    console.error(err)
+  }
 }
 
 const onAddMarker = async () => {

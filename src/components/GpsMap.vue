@@ -46,6 +46,7 @@ onBeforeUnmount(() => {
 watch(
   () => props.path,
   (newPath) => {
+    console.log('path received:', newPath)
     if (!map || !pathLine) return
 
     const latLngs = newPath.map((p) => [p.lat, p.lng])
