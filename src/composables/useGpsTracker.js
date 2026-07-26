@@ -1,34 +1,53 @@
 import { ref, computed, shallowRef } from 'vue'
 import { Geolocation } from '@capacitor/geolocation'
 import { saveSession } from '../utils/storage'
+import { Notify } from 'quasar'
 
 export function useGpsTracker() {
   const path = ref([])
   const markers = ref([])
   const isRecording = ref(false)
   const isSaving = ref(false)
-  const errorMessage = ref(null)
+  // const errorMessage = ref(null)
   const watchId = shallowRef(null)
   const hasPath = computed(() => path.value.length > 0)
+
+  const showError = (message) => {
+    Notify.create({
+      message,
+      color: 'negative',
+      timeout: 3000,
+      position: 'top',
+    })
+  }
 
   /**
    * Begins a new recording session: clears any previous path/markers
    */
   const start = async () => {
     console.log('START')
-    errorMessage.value = null
     path.value = []
     markers.value = []
     isRecording.value = true
 
     watchId.value = await Geolocation.watchPosition(
       { enableHighAccuracy: true, timeout: 10000 },
-      (position, err) => {
+      async (position, err) => {
         if (err) {
-          errorMessage.value = err.message
+          showError(err.message)
+          await stop()
           return
         }
+
         if (!position) return
+
+        if (path.value.length === 0) {
+          Notify.create({
+            type: 'positive',
+            message: 'Recording started',
+            timeout: 800,
+          })
+        }
 
         const candidate = {
           lat: position.coords.latitude,
@@ -43,7 +62,7 @@ export function useGpsTracker() {
   }
 
   /**
-   * Stops the location watch.
+   * Stops the location watch. Also used for error
    */
   const stop = async () => {
     console.log('STOP')
@@ -65,6 +84,13 @@ export function useGpsTracker() {
       lng: position.coords.longitude,
       timestamp: position.timestamp,
       accuracy: position.coords.accuracy,
+    }
+    if (marker.value.length === 0) {
+      Notify.create({
+        type: 'positive',
+        message: 'Marker added',
+        timeout: 800,
+      })
     }
     markers.value.push(marker)
   }
@@ -93,6 +119,7 @@ export function useGpsTracker() {
       return result
     } finally {
       isSaving.value = false
+      Notify.create({ type: 'positive', message: 'Path and screenshot saved to device' })
     }
   }
 
@@ -102,7 +129,6 @@ export function useGpsTracker() {
     path,
     markers,
     hasPath,
-    errorMessage,
     start,
     stop,
     addMarker,

@@ -2,10 +2,6 @@
   <q-page class="column">
     <GpsMap ref="gpsMap" class="col" :path="path" :markers="markers" />
 
-    <q-banner v-if="errorMessage" class="bg-negative text-white" dense>
-      {{ errorMessage }}
-    </q-banner>
-
     <div class="controls">
       <q-btn
         :color="isRecording ? 'grey' : 'positive'"
@@ -32,53 +28,20 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useQuasar } from 'quasar'
 import GpsMap from '../components/GpsMap.vue'
 import { useGpsTracker } from '../composables/useGpsTracker'
 
-const $q = useQuasar()
-
-const {
-  isRecording,
-  isSaving,
-  path,
-  markers,
-  errorMessage,
-  start,
-  stop,
-  addMarker,
-  finishAndSave,
-} = useGpsTracker()
+const { isRecording, isSaving, path, markers, start, stop, addMarker, finishAndSave } =
+  useGpsTracker()
 
 const gpsMap = ref(null)
 
 const onStart = async () => {
-  try {
-    await start()
-
-    console.log(errorMessage)
-    $q.notify({
-      type: 'positive',
-      message: 'Recording started',
-      timeout: 800,
-    })
-  } catch (err) {
-    console.error(err)
-  }
+  await start()
 }
 
 const onAddMarker = async () => {
-  try {
-    await addMarker()
-
-    $q.notify({
-      type: 'positive',
-      message: 'Marker added',
-      timeout: 800,
-    })
-  } catch (err) {
-    console.error(err)
-  }
+  await addMarker()
 }
 
 const onStop = async () => {
@@ -86,16 +49,8 @@ const onStop = async () => {
 
   if (!gpsMap.value) return
 
-  try {
-    const screenshot = await gpsMap.value.captureScreenshot()
-    await finishAndSave(screenshot)
-    $q.notify({ type: 'positive', message: 'Path and screenshot saved to device' })
-  } catch (err) {
-    $q.notify({
-      type: 'negative',
-      message: `Failed to save session: ${err instanceof Error ? err.message : String(err)}`,
-    })
-  }
+  const screenshot = await gpsMap.value.captureScreenshot()
+  await finishAndSave(screenshot)
 }
 </script>
 
