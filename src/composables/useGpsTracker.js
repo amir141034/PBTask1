@@ -3,7 +3,7 @@ import { Geolocation } from '@capacitor/geolocation'
 import { saveSession } from '../utils/storage'
 import { Notify } from 'quasar'
 
-export function useGpsTracker() {
+export const useGpsTracker = () => {
   const path = ref([])
   const markers = ref([])
   const isRecording = ref(false)
